@@ -36,6 +36,11 @@ public class UsuariosService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe un usuario con ese correo"));
     }
 
+    // Compara la contraseña escrita con la encriptada guardada en la base.
+    public boolean contrasenaCorrecta(Usuario usuario, String contrasena) {
+        return contrasena != null && encriptador.matches(contrasena, usuario.getContrasena());
+    }
+
     public Usuario crear(Usuario usuario) {
         // Si no se indica rol, el usuario nuevo es cliente.
         if (usuario.getRol() == null) {
