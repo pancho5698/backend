@@ -32,9 +32,16 @@ public class SeguridadConfig {
                         .requestMatchers("/error", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/registro").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/productos/**", "/api/v1/categorias/**").permitAll()
-                        // Todo lo demás requiere haber iniciado sesión (token válido).
+                        // Solo ADMIN: modificar el catálogo y administrar usuarios.
+                        .requestMatchers(HttpMethod.POST, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/usuarios/**").hasRole("ADMIN")
+                        // ADMIN y VENDEDOR: ver las órdenes (boletas).
+                        .requestMatchers(HttpMethod.GET, "/api/v1/boletas/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        // Todo lo demás (comprar, renovar token) solo requiere haber iniciado sesión.
                         .anyRequest().authenticated())
-                // Sin token o con token inválido: 401.
+                // Sin token o con token inválido: 401. Con token pero sin el rol: 403.
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtFiltro, UsernamePasswordAuthenticationFilter.class);
         return http.build();

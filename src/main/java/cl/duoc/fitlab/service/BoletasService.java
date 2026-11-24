@@ -41,12 +41,12 @@ public class BoletasService {
     }
 
     // Lógica de la compra: valida, calcula el total y descuenta el stock.
-    public Boleta crear(NuevaBoleta pedido) {
+    public Boleta crear(String correoCliente, NuevaBoleta pedido) {
         if (pedido.getItems() == null || pedido.getItems().isEmpty()) {
             throw error("La boleta debe tener al menos un producto.");
         }
         // El cliente debe existir (404 si no).
-        usuariosService.buscarPorCorreo(pedido.getCorreoCliente());
+        usuariosService.buscarPorCorreo(correoCliente);
 
         Boleta boleta = new Boleta();
         // Guardamos cada producto una sola vez, por si el carrito lo trae repetido.
@@ -81,7 +81,7 @@ public class BoletasService {
 
         boleta.setId(siguienteId());
         boleta.setFecha(LocalDateTime.now());
-        boleta.setCorreoCliente(pedido.getCorreoCliente());
+        boleta.setCorreoCliente(correoCliente);
         boleta.setTotal(total);
         return repositorio.save(boleta);
     }

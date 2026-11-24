@@ -10,10 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NuevaBoleta {
-    // Temporal: en el Bloque 4 el correo saldrá del token JWT del usuario logueado.
-    @Schema(description = "Correo del cliente que compra", example = "ana@gmail.com")
-    private String correoCliente;
-
+    // El cliente NO viene aquí: se toma del token JWT del usuario logueado.
     @Schema(description = "Productos del carrito")
     private List<ItemCompra> items;
 }

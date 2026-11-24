@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,7 +49,8 @@ public class BoletasController {
     @ApiResponse(responseCode = "404", description = "El cliente o un producto no existe.", content = @Content)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Boleta crear(@RequestBody NuevaBoleta pedido) {
-        return servicio.crear(pedido);
+    public Boleta crear(@RequestBody NuevaBoleta pedido, Authentication autenticacion) {
+        // El comprador es el usuario del token: nadie puede comprar a nombre de otro.
+        return servicio.crear(autenticacion.getName(), pedido);
     }
 }
